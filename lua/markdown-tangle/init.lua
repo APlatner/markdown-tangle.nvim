@@ -38,7 +38,30 @@ M.tangle = function(filename)
 	end
 end
 
-vim.api.nvim_create_user_command("Tangle", "lua require('markdown-tangle').tangle(vim.fn.expand('%'))", {})
+M.tangle_exec = function(filename)
+	if string.find(filename, ".md") then
+		local lines = vim.api.nvim_buf_get_lines(0, 0, -1, true)
+		local in_code_block = nil
+		local code = ""
+		for _, line in ipairs(lines) do
+			if string.find(line, "```lua") and not in_code_block then
+				in_code_block = true
+			elseif string.find(line, "```") and in_code_block then
+				in_code_block = nil
+				code = "lua << EOF\n" .. code .. "EOF"
+				vim.cmd(code)
+				code = ""
+			elseif in_code_block then
+				code = code .. line .. "\n"
+			end
+		end
+	end
+end
+vim.api.nvim_create_user_command(
+	"TangleExecCurrentBuffer",
+	"lua require('markdown-tangle').tangle_exec(vim.fn.expand('%'))",
+	{}
+)
 
 --[[
 use current buffer

@@ -12,18 +12,21 @@ int main() {
 ```
 
 ```lua
-local str = "Hello,"
+str = "Hello,"
 local str2 = " World!"
+print(str2)
+if vim.api.nvim_eval('exists("str")') == true then
+    print(str)
+end
 ```
 
 ```lua
-print(str .. str2)
+
 ```
 
 ## this is a header
 
-some text
-kjlkjfn
+some text that goes on for long enough that the text should wrap, except that it won't because I included a codeblock that has some lua configuration code that makes it so that neovim will stop the wrapping.
 
 ### this is another header
 
